@@ -4,7 +4,8 @@
 ::     Discord_Invite_Links_Checker.bat - Discord Invite Links Checker
 ::
 :: DESCRIPTION
-::     Scan Discord links and result them as VALID or INVALID.
+::     Crawl a database of Discord invite links
+::     and result their statut as valid or invalid.
 ::
 :: AUTHOR
 ::     IB_U_Z_Z_A_R_Dl
@@ -21,13 +22,15 @@
 ::     A project created in the "server.bat" Discord: https://discord.gg/GSVrHag
 ::
 :: VERSION HISTORY
+::     1.2 (05/10/2021)
 ::     1.1 (05/10/2021)
 ::     1.0 (04/10/2021) - Initial Version
 ::------------------------------------------------------------------------------
+set title=Discord Invite Links Checker v1.2
+set "MACRO_TITLE=title Progress: [!INVITE_PERCENTAGE!/100%%] - [!INVITE_CN!/!INVITE_CN_MAX!]  ^|  Results: [!Valid_Result!-!Invalid_Result!]  ^|  Proxy: [!PROXY!] - [!PROXY_CN!/!PROXY_CN_MAX!] - !title!"
 Setlocal EnableDelayedExpansion
 cd /d "%~dp0"
 cls
-set title=Discord Invite Links Checker v1.1
 title !title!
 if defined TEMP (set "TMPF=!TEMP!") else if defined TMP (set "TMPF=!TMP!") else (
     call :MSGBOX 2 "Your 'TEMP' and 'TMP' environment variables do not exist." "Please fix one of them and try again." 69648 "!title!"
@@ -55,8 +58,8 @@ for /F "tokens=2delims==." %%a in ('wmic os get LocalDateTime /value') do set "D
 set "DateTime=!DateTime:~0,-10!-!DateTime:~-10,2!-!DateTime:~-8,2!_!DateTime:~-6,2!-!DateTime:~-4,2!-!DateTime:~-2!"
 set "LOGGING=(if not exist Logs md Logs) & >>Logs\LOGS_%~n0_!DateTime!.txt"
 :MAIN
-title !title!
 cls
+title !title!
 echo.
 echo    !brightwhite![?]!cyan! This tool does NOT work with links that do not redirect to: {https://discord.com/invite/[INVITE_CODE]}
 echo.
@@ -79,44 +82,28 @@ echo  !yellow!https://www.proxy-list.download/api/v1/get?type=http
 echo.
 echo.
 echo    !cyan!Enter your !underline!proxy database!underlineoff! !cyan!LINK!cyan! (or) !cyan!FILE PATH!cyan! / Drag and Drop it below...
-set Proxy_DB=
-set /p "Proxy_DB=!BS!!cyan! > !yellow!"
-call :DB_CHECKER Proxy_DB proxy || goto :MAIN
-for /f "tokens=1-4delims=:.," %%a in ("!time: =0!") do set /a "t1=(((1%%a*60)+1%%b)*60+1%%c)*100+1%%d-36610100"
-call :GENERATE_NEW_PROXYS_ARRAY
-if not defined PROXY_[1] (
-    call :MSGBOX 2 "ERROR: Your Proxy DB seem to be empty." "Enter an other one..." 69680 "!title!"
-    goto :MAIN
-)
-for /f "tokens=1-4delims=:.," %%a in ("!time: =0!") do set /a "t2=(((1%%a*60)+1%%b)*60+1%%c)*100+1%%d-36610100, tDiff=t2-t1, tDiff+=((~(tDiff&(1<<31))>>31)+1)*8640000, seconds=tDiff/100"
-title Progress: [0/NULL] - [0/100%%]  ^|  Results: 0/0  ^|  Proxy: [NULL] - [0/!PROXY_CN_MAX!] - [DYN: Loading...] - !title!
-if !seconds! lss 4 >nul timeout /t 3 /nobreak
-set Proxy_First_Line=
-set Proxy_Last_Line=
-%MACRO_FOR_PROXY_FIRST_OR_LAST_LINE_DO% if not defined Proxy_First_Line set "Proxy_First_Line=%%A"
-%MACRO_FOR_PROXY_FIRST_OR_LAST_LINE_DO% set "Proxy_Last_Line=%%A"
-set PROXY_DYN=0
-if not "!Proxy_First_Line!"=="!PROXY_[1]!" if not "!Proxy_Last_Line!"=="!PROXY_[%PROXY_CN_MAX%]!" set PROXY_DYN=1
-title Progress: [0/NULL] - [0/100%%]  ^|  Results: 0/0  ^|  Proxy: [NULL] - [0/!PROXY_CN_MAX!] - [DYN: !PROXY_DYN!] - !title!
+set PROXY_DB=
+set /p "PROXY_DB=!BS!!cyan! > !yellow!"
+call :DB_CHECKER PROXY_DB proxy || goto :MAIN
 echo.
 echo    !cyan!Enter your Discord !underline!invite links database!underlineoff! !cyan!LINK!cyan! (or) !cyan!FILE PATH!cyan! / Drag and Drop it below...
 set Invites_DB=
 set /p "Invites_DB=!BS!!cyan! > !yellow!"
 call :DB_CHECKER Invites_DB "your Discord invite links" || goto :MAIN
-set /a index=0, cn=0, PROXY_CN=0, Valid_Result=0, Invalid_Result=0
-%MACRO_FOR_INVITES_DB_DO% (
-    set /a index+=1
-    title Progress: [0/!index!] - [0/100%%]  ^|  Results: 0/0  ^|  Proxy: [NULL] - [0/!PROXY_CN_MAX!] - [DYN: !PROXY_DYN!] - !title!
-)
 echo.
+set PROXY=NULL
+set /a INVITE_CN=0, INVITE_CN_MAX=0, PROXY_CN=0, PROXY_CN_MAX=0, Valid_Result=0, Invalid_Result=0
+%MACRO_FOR_INVITES_DB_DO% (
+    set /a INVITE_CN_MAX+=1
+    %MACRO_TITLE%
+)
 echo  !brightblack!旼컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
 echo  !brightblack!�         !brightblue!{DISCORD INVITE LINK}!brightblack!         ^<^> !green!{STATUT}!brightblack!  ^<^>    !brightmagenta!{PROXY USED}!brightblack!       �
 echo  !brightblack!쳐컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴컴�
-set PROXY=NULL
 for /f "tokens=1-4delims=:.," %%a in ("!time: =0!") do set /a "t1=(((1%%a*60)+1%%b)*60+1%%c)*100+1%%d-36610100"
 %MACRO_FOR_INVITES_DB_DO% (
-    set /a cn+=1, el=cn*100/index
-    title Progress: [!cn!/!index!] - [!el!/100%%]  ^|  Results: !Valid_Result!/!Invalid_Result!  ^|  Proxy: [!PROXY!] - [!PROXY_CN!/!PROXY_CN_MAX!] - [DYN: !PROXY_DYN!] - !title!
+    set /a INVITE_CN+=1, INVITE_PERCENTAGE=INVITE_CN*100/INVITE_CN_MAX
+    %MACRO_TITLE%
     set "URL=%%A"
     set "URL=!URL:*://=!"
     set "HTTPS_URL=https://!URL!"
@@ -132,7 +119,6 @@ for /f "tokens=1-4delims=:.," %%a in ("!time: =0!") do set /a "t1=(((1%%a*60)+1%
             set "Display_Padding=!Display_Padding:~0,37!"
         )
         <nul set /p="!BS!!brightblack! � !brightblue!!Display_Padding!!brightblack! <> "
-        if "!PROXY!"=="NULL" call :GENERATE_NEW_PROXY
         call :PROXY
     )
 )
@@ -142,9 +128,9 @@ echo.
 for %%A in (s_r1 s_r2 s_i s_s) do set %%A=
 if !Valid_Result! gtr 1 set s_r1=s
 if !Invalid_Result! gtr 1 set s_r2=s
-if !index! gtr 1 set s_i=s
+if !INVITE_CN_MAX! gtr 1 set s_i=s
 if !seconds! gtr 1 set s_s=s
-echo !cyan!Scan completed with !Valid_Result! valid result!s_r1! and !Invalid_Result! invalid result!s_r2! found from !index! indexed link!s_i! within !seconds! second!s_s!.
+echo !cyan!Scan completed with !Valid_Result! valid result!s_r1! and !Invalid_Result! invalid result!s_r2! found from !INVITE_CN_MAX! indexed link!s_i! within !seconds! second!s_s!.
 if exist "!LOGGING:*>>=!" (
     >"!TMPF!\msgbox.vbs" (
         echo Dim Msg,Style,Title,Response
@@ -200,26 +186,28 @@ call :PROXY_CHECKER && (
     )
     goto :PROXY
 )
-call :_GENERATE_NEW_PROXY
+call :GENERATE_NEW_PROXY
 goto :PROXY
 
-:GENERATE_NEW_PROXY
+:GENERATE_NEW_PROXY_ARRAY
+set /a PROXY_CN=0, MEM=PROXY_CN_MAX, PROXY_CN_MAX=0
+set PROXY=Loading...
+%MACRO_TITLE%
+for /L %%A in (1,1,!MEM!) do set PROXY_[%%A]=
+set PROXY_CN_MAX=0
+%MACRO_FOR_PROXY_DO% if not "%%A"=="" if not "%%B"=="" (
+    set /a PROXY_CN+=1, PROXY_CN_MAX=PROXY_CN
+    set "PROXY_[!PROXY_CN!]=%%A:%%B"
+    %MACRO_TITLE%
+)
 set PROXY_CN=0
-title Progress: [!cn!/!index!] - [!el!/100%%]  ^|  Results: !Valid_Result!/!Invalid_Result!  ^|  Proxy: [Searching...] - [!PROXY_CN!/!PROXY_CN_MAX!] - [DYN: !PROXY_DYN!] - !title!
-:_GENERATE_NEW_PROXY
+:GENERATE_NEW_PROXY
 set /a PROXY_CN+=1
-if "!PROXY_DYN!"=="1" (
-    if !PROXY_CN! gtr !PROXY_CN_MAX! (
-        set PROXY_CN=1
-        call :GENERATE_NEW_PROXYS_ARRAY
-    )
-)
-if not defined PROXY_[!PROXY_CN!] (
-    goto :GENERATE_NEW_PROXY
-)
-title Progress: [!cn!/!index!] - [!el!/100%%]  ^|  Results: !Valid_Result!/!Invalid_Result!  ^|  Proxy: [Searching...] - [!PROXY_CN!/!PROXY_CN_MAX!] - [DYN: !PROXY_DYN!] - !title!
+if not defined PROXY_[!PROXY_CN!] goto :GENERATE_NEW_PROXY_ARRAY
+set PROXY=Searching...
+%MACRO_TITLE%
 for /F "tokens=1,2delims=:" %%A in ("!PROXY_[%PROXY_CN%]!") do (
-    if not "%%A"=="" if not "%%B"=="" if not "%%A:%%B"=="!PROXY!" (
+    if not "%%A:%%B"=="!PROXY!" (
         set "PROXY_IP=%%A"
         set "PROXY_PORT=%%B"
         if defined PROXY_IP if defined PROXY_PORT call :CHECK_PORT PROXY_PORT && call :CHECK_IP PROXY_IP && (
@@ -228,7 +216,7 @@ for /F "tokens=1,2delims=:" %%A in ("!PROXY_[%PROXY_CN%]!") do (
         )
     )
 )
-goto :_GENERATE_NEW_PROXY
+goto :GENERATE_NEW_PROXY
 
 :PROXY_CHECKER
 set LOG_PROXY_CHECKER=
@@ -236,28 +224,12 @@ for /f "delims=" %%A in ('curl.exe -fkLs --connect-timeout 5 --proxy "!PROXY!" "
     set "LOG_PROXY_CHECKER=%%A"
     if defined LOG_PROXY_CHECKER (
         if not "!LOG_PROXY_CHECKER:discord.com/invite/discord-developers=!"=="!LOG_PROXY_CHECKER!" (
-            title Progress: [!cn!/!index!] - [!el!/100%%]  ^|  Results: !Valid_Result!/!Invalid_Result!  ^|  Proxy: [!PROXY!] - [!PROXY_CN!/!PROXY_CN_MAX!] - [DYN: !PROXY_DYN!] - !title!
+            %MACRO_TITLE%
             exit /b 0
         )
     )
 )
 exit /b 1
-
-:GENERATE_NEW_PROXYS_ARRAY
-for /L %%A in (1,1,!PROXY_CN_MAX!) do set PROXY_[%%A]=
-set /a x=0, PROXY_CN_MAX=0
-if defined PROXY_CN (
-    set "MACRO_TITLE=title Progress: [!cn!/!index!] - [!el!/100%%]  ^^|  Results: !Valid_Result!/!Invalid_Result!  ^^|  Proxy: [!PROXY!] - [!PROXY_CN!/^!PROXY_CN_MAX^!] - [DYN: !PROXY_DYN!] - !title!"
-) else (
-    set "MACRO_TITLE=title Progress: [0/NULL] - [0/100%%]  ^^|  Results: !Valid_Result!/!Invalid_Result!  ^^|  Proxy: [NULL] - [0/^!PROXY_CN_MAX^!] - [DYN: NULL] - !title!"
-)
-%FOR_PROXY_DO% (
-    set /a x+=1, PROXY_CN_MAX=x
-    set "PROXY_[!x!]=%%A:%%B"
-    %MACRO_TITLE%
-)
-set x=
-exit /b
 
 :DB_CHECKER
 if not defined %1 exit /b 1
@@ -267,9 +239,8 @@ if exist "!%1!" (
     if "%1"=="Invites_DB" (
         set "MACRO_FOR_INVITES_DB_DO=for /f "usebackq" %%A in ("!%1!") do"
     )
-    if "%1"=="Proxy_DB" (
-        set "MACRO_FOR_PROXY_FIRST_OR_LAST_LINE_DO=for /f "usebackq" %%A in ("!%1!") do"
-        set "FOR_PROXY_DO=for /f "usebackqtokens=1-2delims=:" %%A in ("!%1!") do"
+    if "%1"=="PROXY_DB" (
+        set "MACRO_FOR_PROXY_DO=for /f "usebackqtokens=1-2delims=:" %%A in ("!%1!") do"
     )
 ) else (
     call :CHECK_URL %1 || exit /b 1
@@ -279,12 +250,12 @@ if exist "!%1!" (
         call :MSGBOX 2 "ERROR: Conection failed to your %~2 database: '!%1!'." "Try again..." 69680 "!title!"
         exit /b 1
     )
+    title !title!
     if "%1"=="Invites_DB" (
         set "MACRO_FOR_INVITES_DB_DO=for /f %%A in ('curl.exe -fkLs "!%1!"') do"
     )
-    if "%1"=="Proxy_DB" (
-        set "MACRO_FOR_PROXY_FIRST_OR_LAST_LINE_DO=for /f %%A in ('curl.exe -fkLs "!%1!"') do"
-        set "FOR_PROXY_DO=for /f "tokens=1-2delims=:" %%A in ('curl.exe -fkLs "!%1!"') do"
+    if "%1"=="PROXY_DB" (
+        set "MACRO_FOR_PROXY_DO=for /f "tokens=1-2delims=:" %%A in ('curl.exe -fkLs "!%1!"') do"
     )
 )
 exit /b 0
