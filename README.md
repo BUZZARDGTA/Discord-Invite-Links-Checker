@@ -1,4 +1,4 @@
-# **__Discord Invite Links Checker v1.1__:**
+# Discord Invite Links Checker v1.1
 
 *Description*:
 > Crawl a database of Discord invite links and check the statut for valid and invalid one's.
