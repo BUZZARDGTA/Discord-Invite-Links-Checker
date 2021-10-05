@@ -3,12 +3,6 @@
 *Description*:
 > Crawl a database of Discord invite links and result their statut as valid or invalid.
 >
-*Documentation*:
-> In the title bar of your command prompt:
->
-> `DYN: 0` = A static proxy list that didn't seen it's content change in 3 seconds interval.
->
-> `DYN: 1` = A dynamic proxy list that seen it's it's content changed after 3 seconds interval.
 >
 *Credits*:
 > @Grub4K#2417 - Creator of the logging name algorithm.
