@@ -1,27 +1,14 @@
-# Discord Invite Links Checker v1.2
+# GTA V Modded Files Detector
 
 *Description*:
-> Crawl a database of Discord invite links and result their statut as valid or invalid.
+> Delete the original Grand Theft Auto V PS3/XBOX360 scripts in the current folder to help displaying modded ones.
 >
 >
 *Credits*:
-> @Grub4K#2417 - Creator of the logging name algorithm.
+> Grub4K - Teached me the tuple pseudo-data pattern.
 >
-> @Grub4K#2417 - Creator of the timer algorithm.
+> Grub4K - Helped me improving the HASHING algorithm.
 >
-> @Grub4K#2417 - Creator of the padding CLI algorithm.
+> This project is inspired by the one from "James Reborn":
 >
-> @Grub4K#2417 - Helped reducing Curl PATH algorithm.
->
-> @Grub4K#2417 - Helped designing the CLI.
->
-> @blacktario#0700 - Original project idea.
->
-> @blacktario#0700 - Proxy checker idea.
->
-> @sintrode#4642 - Helped creating the database parsing algorithm.
->
-*Extra*:
-> If you search a Discord database of invite links:
->
-> https://pastebin.com/raw/D9LAPCEw
+> https://github.com/JamesCreations/ModdedFileDetector-GTA5PS3XBOX360
