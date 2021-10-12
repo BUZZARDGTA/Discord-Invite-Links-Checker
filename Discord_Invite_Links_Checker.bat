@@ -11,14 +11,14 @@
 ::     IB_U_Z_Z_A_R_Dl
 ::
 :: CREDITS
-::     @Grub4K#2417 - Creator of the logging name algorithm.
-::     @Grub4K#2417 - Creator of the timer algorithm.
-::     @Grub4K#2417 - Creator of the padding CLI algorithm.
-::     @Grub4K#2417 - Helped reducing Curl PATH algorithm.
-::     @Grub4K#2417 - Helped designing the CLI.
-::     @blacktario#9999 - Original project idea.
-::     @blacktario#9999 - Proxy checker idea.
-::     @sintrode#4642 - Helped creating the database parsing algorithm.
+::     @Grub4K - Creator of the logging name algorithm.
+::     @Grub4K - Creator of the timer algorithm.
+::     @Grub4K - Creator of the padding CLI algorithm.
+::     @Grub4K - Helped reducing Curl PATH algorithm.
+::     @Grub4K - Helped designing the CLI.
+::     @blacktario - Original project idea.
+::     @blacktario - Proxy checker idea.
+::     @sintrode - Helped creating the database parsing algorithm.
 ::     A project created in the "server.bat" Discord: https://discord.gg/GSVrHag
 ::
 :: VERSION HISTORY
