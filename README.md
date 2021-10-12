@@ -5,21 +5,21 @@
 >
 >
 *Credits*:
-> @Grub4K#2417 - Creator of the logging name algorithm.
+> @Grub4K - Creator of the logging name algorithm.
 >
-> @Grub4K#2417 - Creator of the timer algorithm.
+> @Grub4K - Creator of the timer algorithm.
 >
-> @Grub4K#2417 - Creator of the padding CLI algorithm.
+> @Grub4K - Creator of the padding CLI algorithm.
 >
-> @Grub4K#2417 - Helped reducing Curl PATH algorithm.
+> @Grub4K - Helped reducing Curl PATH algorithm.
 >
-> @Grub4K#2417 - Helped designing the CLI.
+> @Grub4K - Helped designing the CLI.
 >
-> @blacktario#0700 - Original project idea.
+> @blacktario - Original project idea.
 >
-> @blacktario#0700 - Proxy checker idea.
+> @blacktario - Proxy checker idea.
 >
-> @sintrode#4642 - Helped creating the database parsing algorithm.
+> @sintrode - Helped creating the database parsing algorithm.
 >
 *Extra*:
 > If you search a Discord database of invite links:
