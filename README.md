@@ -21,7 +21,10 @@
 >
 > @sintrode - Helped creating the database parsing algorithm.
 >
-*Extra*:
-> If you search a Discord database of invite links:
+> @Sintrode - Helped me encoding the CLI.
 >
-> https://pastebin.com/raw/D9LAPCEw
+> A project created in the "server.bat" Discord: https://discord.gg/GSVrHag
+>
+>
+*Extra*:
+> If you search a Discord database of invite links: https://pastebin.com/raw/D9LAPCEw
