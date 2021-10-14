@@ -27,6 +27,7 @@ cls
 setlocal DisableDelayedExpansion
 cd /d "%~dp0"
 set "@TITLE=title Progress: [!Invite_Percentage!/100%%] - [!Invite_CN!/!Invite_CN_MAX!]  ^|  Result!s_Result!: [!Result_Valid!-!Result_Invalid!]  ^|  Proxy: [!Proxy!] - [!Proxy_CN!/!Proxy_CN_MAX!] - !TITLE!"
+set "@SET_S=if !?! gtr 1 (set s_?=s) else (set s_?=)"
 Setlocal EnableDelayedExpansion
 for %%A in (s_Index s_Result s_Result_Valid s_Result_Invalid s_Second) do set %%A=
 set TITLE=Discord Invite Links Checker
@@ -104,12 +105,8 @@ echo  !BRIGHTBLACK!│         !BRIGHTBLUE!{DISCORD INVITE LINK}!BRIGHTBLACK!   
 echo  !BRIGHTBLACK!├─────────────────────────────────────────────────────────────────────────────┤
 for /f "tokens=1-4delims=:.," %%A in ("!time: =0!") do set /a "t1=(((1%%A*60)+1%%B)*60+1%%C)*100+1%%D-36610100"
 %@FOR_INVITES_DB_DO% (
-    set /a Invite_CN+=1, Invite_Percentage=Invite_CN*100/Invite_CN_MAX, s_Result=Result_Valid+Result_Invalid
-    if !s_Result! gtr 1 (
-        set s_Result=s
-    ) else (
-        set s_Result=
-    )
+    set /a Invite_CN+=1, Invite_Percentage=Invite_CN*100/Invite_CN_MAX, Result=Result_Valid+Result_Invalid
+    %@SET_S:?=Result%
     %@TITLE%
     set "URL=%%A"
     set "URL=!URL:*://=!"
@@ -131,17 +128,13 @@ for /f "tokens=1-4delims=:.," %%A in ("!time: =0!") do set /a "t1=(((1%%A*60)+1%
 )
 for /f "tokens=1-4delims=:.," %%A in ("!time: =0!") do set /a "t2=(((1%%A*60)+1%%B)*60+1%%C)*100+1%%D-36610100, tDiff=t2-t1, tDiff+=((~(tDiff&(1<<31))>>31)+1)*8640000, Seconds=tDiff/100"
 echo  !BRIGHTBLACK!└─────────────────────────────────────────────────────────────────────────────┘
-set /a s_Result=Result_Valid+Result_Invalid
-if !s_Result! gtr 1 (
-    set s_Result=s
-) else (
-    set s_Result=
-)
+set /a Result=Result_Valid+Result_Invalid
+%@SET_S:?=Result%
 %@TITLE%
-if !Invite_CN_MAX! gtr 1 set s_Index=s
-if !Result_Valid! gtr 1 set s_Result_Valid=s
-if !Result_Invalid! gtr 1 set s_Result_Invalid=s
-if !Seconds! gtr 1 set s_Second=s
+%@SET_S:?=Result_Valid%
+%@SET_S:?=Result_Invalid%
+%@SET_S:?=Invite_CN_MAX%
+%@SET_S:?=Seconds%
 echo.
 echo !CYAN!Scan completed with !Result_Valid! valid result!s_Result_Valid! and !Result_Invalid! invalid result!s_Result_Invalid! found from !Invite_CN_MAX! indexed link!s_Index! within !Seconds! second!s_Second!.
 if exist "!@LOGGING:*>>=!" (
