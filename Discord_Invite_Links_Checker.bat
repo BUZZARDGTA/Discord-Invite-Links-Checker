@@ -30,7 +30,6 @@ cd /d "%~dp0"
 set "@TITLE=title Progress: [!Invite_Percentage!/100%%] - [!Invite_CN!/!Invite_CN_MAX!]  ^|  Result!s_Result!: [!Result_Valid!-!Result_Invalid!]  ^|  Proxy: [!Proxy!] - [!Proxy_CN!/!Proxy_CN_MAX!] - !TITLE!"
 set "@SET_S=if !?! gtr 1 (set s_?=s) else (set s_?=)"
 setlocal EnableDelayedExpansion
-for %%A in (s_Index s_Result s_Result_Valid s_Result_Invalid s_Second) do set %%A=
 set TITLE=Discord Invite Links Checker
 title !TITLE!
 if defined TEMP (set "TMPF=!TEMP!") else if defined TMP (set "TMPF=!TMP!") else (
