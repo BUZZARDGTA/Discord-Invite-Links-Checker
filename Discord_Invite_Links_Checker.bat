@@ -27,7 +27,7 @@ cls
 >nul chcp 65001
 setlocal DisableDelayedExpansion
 cd /d "%~dp0"
-set "@TITLE=title Progress: [!Invite_Percentage!/100%%] - [!Invite_CN!/!Invite_CN_MAX!]  ^|  Result!s_Result!: [!Result_Valid!-!Result_Invalid!]  ^|  Proxy: [!Proxy!] - [!Proxy_CN!/!Proxy_CN_MAX!] - !TITLE!"
+set "@TITLE=title Progress: [!Invite_Percentage!/100%%] - [!Invite_CN!/!Invite_CN_MAX!]  ^|  Result!s_Results!: [!Results_Valid!-!Results_Invalid!]  ^|  Proxy: [!Proxy!] - [!Proxy_CN!/!Proxy_CN_MAX!] - !TITLE!"
 set "@SET_S=if !?! gtr 1 (set s_?=s) else (set s_?=)"
 setlocal EnableDelayedExpansion
 set TITLE=Discord Invite Links Checker
@@ -95,7 +95,7 @@ set /p "Invites_DB=!BS!!CYAN! > !YELLOW!"
 call :DB_CHECKER Invites_DB "your Discord invite links" || goto :MAIN
 echo.
 set Proxy=NULL
-set /a Invite_CN=0, Invite_CN_MAX=0, Proxy_CN=0, Proxy_CN_MAX=0, Result_Valid=0, Result_Invalid=0
+set /a Invite_Percentage=0, Invite_CN=0, Invite_CN_MAX=0, Proxy_CN=0, Proxy_CN_MAX=0, Results_Valid=0, Results_Invalid=0
 %@FOR_INVITES_DB_DO% (
     set /a Invite_CN_MAX+=1
     %@TITLE%
@@ -105,8 +105,8 @@ echo  !BRIGHTBLACK!│         !BRIGHTBLUE!{DISCORD INVITE LINK}!BRIGHTBLACK!   
 echo  !BRIGHTBLACK!├─────────────────────────────────────────────────────────────────────────────┤
 for /f "tokens=1-4delims=:.," %%A in ("!time: =0!") do set /a "t1=(((1%%A*60)+1%%B)*60+1%%C)*100+1%%D-36610100"
 %@FOR_INVITES_DB_DO% (
-    set /a Invite_CN+=1, Invite_Percentage=Invite_CN*100/Invite_CN_MAX, Result=Result_Valid+Result_Invalid
-    %@SET_S:?=Result%
+    set /a Invite_CN+=1, Invite_Percentage=Invite_CN*100/Invite_CN_MAX, Results=Results_Valid+Results_Invalid
+    %@SET_S:?=Results%
     %@TITLE%
     set "URL=%%A"
     set "URL=!URL:*://=!"
@@ -128,19 +128,19 @@ for /f "tokens=1-4delims=:.," %%A in ("!time: =0!") do set /a "t1=(((1%%A*60)+1%
 )
 for /f "tokens=1-4delims=:.," %%A in ("!time: =0!") do set /a "t2=(((1%%A*60)+1%%B)*60+1%%C)*100+1%%D-36610100, tDiff=t2-t1, tDiff+=((~(tDiff&(1<<31))>>31)+1)*8640000, Seconds=tDiff/100"
 echo  !BRIGHTBLACK!└─────────────────────────────────────────────────────────────────────────────┘
-set /a Result=Result_Valid+Result_Invalid
-%@SET_S:?=Result%
-%@TITLE%
-%@SET_S:?=Result_Valid%
-%@SET_S:?=Result_Invalid%
-%@SET_S:?=Invite_CN_MAX%
+set /a Percentage=100, Results=Results_Valid+Results_Invalid
+%@SET_S:?=Results%
+%@SET_S:?=Results_Valid%
+%@SET_S:?=Results_Invalid%
+%@SET_S:?=Index%
 %@SET_S:?=Seconds%
+%@TITLE%
 echo.
-echo !CYAN!Scan completed with !Result_Valid! valid result!s_Result_Valid! and !Result_Invalid! invalid result!s_Result_Invalid! found from !Invite_CN_MAX! indexed link!s_Index! within !Seconds! second!s_Second!.
+echo !CYAN!Scan completed with !Results_Valid! valid result!s_Results_Valid! and !Results_Invalid! invalid result!s_Results_Invalid! found from !Invite_CN_MAX! indexed link!s_Index! within !Seconds! second!s_Seconds!.
 if exist "!@LOGGING:*>>=!" (
     >"!TMPF!\msgbox.vbs" (
         echo Dim Msg,Style,Title,Response
-        echo Msg="Scan completed, do you want to open logged result!s_Result!?"
+        echo Msg="Scan completed, do you want to open logged result!s_Results!?"
         echo Style=69668
         echo Title="!TITLE!"
         echo Response=MsgBox^(Msg,Style,Title^)
@@ -166,7 +166,7 @@ for /f "delims=" %%A in ('curl.exe -fkLs --connect-timeout 10 --proxy "!Proxy!" 
     set "LOG_Proxy=%%A"
     if defined LOG_Proxy (
         if not "!LOG_Proxy:discord.com/invite/%Invite_Code%=!"=="!LOG_Proxy!" (
-            set /a Result_Valid+=1
+            set /a Results_Valid+=1
             set "Display_Padding=!Proxy!"
             if "!Display_Padding:~0,21!"=="!Display_Padding!" (
                 set "Display_Padding=!Display_Padding!                    "
@@ -180,7 +180,7 @@ for /f "delims=" %%A in ('curl.exe -fkLs --connect-timeout 10 --proxy "!Proxy!" 
 )
 call :PROXY_CHECKER && (
     if defined LOG_Proxy (
-        set /a Result_Invalid+=1
+        set /a Results_Invalid+=1
         set "Display_Padding=!Proxy!"
         if "!Display_Padding:~0,21!"=="!Display_Padding!" (
             set "Display_Padding=!Display_Padding!                    "
