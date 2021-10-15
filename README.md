@@ -11,6 +11,8 @@
 >
 > @Grub4K - Creator of the padding CLI algorithm.
 >
+> @Grub4K - Helped reducing variables plural algorithm.
+>
 > @Grub4K - Helped reducing Curl PATH algorithm.
 >
 > @Grub4K - Helped designing the CLI.
