@@ -96,6 +96,7 @@ call :DB_CHECKER Invites_DB "your Discord invite links" || goto :MAIN
 echo.
 set Proxy=NULL
 set /a Invite_Percentage=0, Invite_CN=0, Invite_CN_MAX=0, Proxy_CN=0, Proxy_CN_MAX=0, Results_Valid=0, Results_Invalid=0
+for %%A in (s_Index s_Results s_Results_Valid s_Results_Invalid s_Seconds) do set %%A=
 %@FOR_INVITES_DB_DO% (
     set /a Invite_CN_MAX+=1
     %@TITLE%
