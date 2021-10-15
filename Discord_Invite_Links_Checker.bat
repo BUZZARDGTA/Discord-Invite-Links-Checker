@@ -14,6 +14,7 @@
 ::     @Grub4K - Creator of the logging name algorithm.
 ::     @Grub4K - Creator of the timer algorithm.
 ::     @Grub4K - Creator of the padding CLI algorithm.
+::     @Grub4K - Helped reducing variables plural algorithm.
 ::     @Grub4K - Helped reducing Curl PATH algorithm.
 ::     @Grub4K - Helped designing the CLI.
 ::     @blacktario - Original project idea.
@@ -22,13 +23,13 @@
 ::     @Sintrode - Helped me encoding the CLI.
 ::     A project created in the "server.bat" Discord: https://discord.gg/GSVrHag
 ::------------------------------------------------------------------------------
-cls
->nul chcp 65001
 setlocal DisableDelayedExpansion
 cd /d "%~dp0"
 set "@TITLE=title Progress: [!Invite_Percentage!/100%%] - [!Invite_CN!/!Invite_CN_MAX!]  ^|  Result!s_Result!: [!Result_Valid!-!Result_Invalid!]  ^|  Proxy: [!Proxy!] - [!Proxy_CN!/!Proxy_CN_MAX!] - !TITLE!"
 set "@SET_S=if !?! gtr 1 (set s_?=s) else (set s_?=)"
-Setlocal EnableDelayedExpansion
+setlocal EnableDelayedExpansion
+cls
+>nul chcp 65001
 for %%A in (s_Index s_Result s_Result_Valid s_Result_Invalid s_Second) do set %%A=
 set TITLE=Discord Invite Links Checker
 title !TITLE!
