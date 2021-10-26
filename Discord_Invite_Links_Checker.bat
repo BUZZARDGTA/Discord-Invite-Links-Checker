@@ -27,6 +27,7 @@ cls
 >nul chcp 65001
 setlocal DisableDelayedExpansion
 cd /d "%~dp0"
+set "@LOGGING=(if not exist "Results\" md "Results") & >>Results\!DATETIME!.txt"
 set "@TITLE=title Progress: [!Invite_Percentage!/100%%] - [!Invite_CN!/!Invite_CN_MAX!]  ^|  Result!s_Results!: [!Results_Valid!-!Results_Invalid!]  ^|  Proxy: [!Proxy!] - [!Proxy_CN!/!Proxy_CN_MAX!] - !TITLE!"
 set "@SET_S=if !?! gtr 1 (set s_?=s) else (set s_?=)"
 setlocal EnableDelayedExpansion
@@ -49,17 +50,12 @@ for /f "tokens=4,5delims=. " %%A in ('ver') do (
                 set %%B=[%%Cm
             )
         )
-        set BS=
-    ) else (
-        set BS=
     )
 )
 for /f "tokens=2delims==." %%A in ('wmic os get LocalDateTime /value') do (
-    set "DateTime=%%A"
-    set "DateTime=!DateTime:~0,-10!-!DateTime:~-10,2!-!DateTime:~-8,2!_!DateTime:~-6,2!-!DateTime:~-4,2!-!DateTime:~-2!"
+    set "DATETIME=%%A"
+    set "DATETIME=!DATETIME:~0,-10!-!DATETIME:~-10,2!-!DATETIME:~-8,2!_!DATETIME:~-6,2!-!DATETIME:~-4,2!-!DATETIME:~-2!"
 )
-set "@LOGGING=(if not exist Logs md Logs) & >>Logs\LOGS_%~n0_!DateTime!.txt"
-set DateTime=
 :MAIN
 cls
 title !TITLE!
@@ -86,12 +82,12 @@ echo.
 echo.
 echo    !CYAN!Enter your !UNDERLINE!proxy database!UNDERLINEOFF! !CYAN!LINK!CYAN! (or) !CYAN!FILE PATH!CYAN! / Drag and Drop it below...
 set Proxy_DB=
-set /p "Proxy_DB=!BS!!CYAN! > !YELLOW!"
+set /p "Proxy_DB=!CYAN! > !YELLOW!"
 call :DB_CHECKER Proxy_DB proxy || goto :MAIN
 echo.
 echo    !CYAN!Enter your Discord !UNDERLINE!invite links database!UNDERLINEOFF! !CYAN!LINK!CYAN! (or) !CYAN!FILE PATH!CYAN! / Drag and Drop it below...
 set Invites_DB=
-set /p "Invites_DB=!BS!!CYAN! > !YELLOW!"
+set /p "Invites_DB=!CYAN! > !YELLOW!"
 call :DB_CHECKER Invites_DB "your Discord invite links" || goto :MAIN
 echo.
 set Proxy=NULL
@@ -123,7 +119,7 @@ for /f "tokens=1-4delims=:.," %%A in ("!time: =0!") do set /a "t1=(((1%%A*60)+1%
             set "Display_Padding=!Display_Padding!                    "
             set "Display_Padding=!Display_Padding:~0,37!"
         )
-        <nul set /p="!BS!!BRIGHTBLACK! │ !BRIGHTBLUE!!Display_Padding!!BRIGHTBLACK! <> "
+        <nul set /p="!BRIGHTBLACK! │ !BRIGHTBLUE!!Display_Padding!!BRIGHTBLACK! <> "
         call :PROXY
     )
 )
@@ -138,7 +134,7 @@ set /a Percentage=100, Results=Results_Valid+Results_Invalid
 %@TITLE%
 echo.
 echo !CYAN!Scan completed with !Results_Valid! valid result!s_Results_Valid! and !Results_Invalid! invalid result!s_Results_Invalid! found from !Invite_CN_MAX! indexed link!s_Index! within !Seconds! second!s_Seconds!.
-if exist "!@LOGGING:*>>=!" (
+if exist "Results\!DATETIME!.txt" (
     >"!TMPF!\msgbox.vbs" (
         echo Dim Msg,Style,Title,Response
         echo Msg="Scan completed, do you want to open logged result!s_Results!?"
@@ -153,11 +149,11 @@ if exist "!@LOGGING:*>>=!" (
         echo End If
     )
     cscript //nologo "!TMPF!\msgbox.vbs"
-    if "!ErrorLevel!"=="6" start /max "" "!@LOGGING:*>>=!"
+    if "!ErrorLevel!"=="6" start /max "" "Results\!DATETIME!.txt"
     del /f /q "!TMPF!\msgbox.vbs"
 )
 echo.
-<nul set /p="Press !YELLOW!{ANY KEY}!CYAN! to exit..."
+<nul set /p=Press !YELLOW!{ANY KEY}!CYAN! to exit...
 >nul pause
 exit
 
@@ -316,5 +312,5 @@ if "%1"=="2" mshta vbscript:Execute("msgbox ""%~2"" & Chr(10) & Chr(10) & ""%~3"
 exit /b
 
 :ERROR_FATAL
-call :MSGBOX 2 "ERROR: '%~dp0%1' not found." "Exiting Discord Invite Links Checker..." 69648 "!TITLE!"
+call :MSGBOX 2 "ERROR: '%~dp0%~1' not found." "Exiting !TITLE!..." 69648 "!TITLE!"
 exit
