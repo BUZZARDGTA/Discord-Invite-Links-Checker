@@ -1,4 +1,3 @@
-@echo off
 ::------------------------------------------------------------------------------
 :: NAME
 ::     Discord_Invite_Links_Checker.bat - Discord Invite Links Checker
@@ -21,12 +20,18 @@
 ::     @blacktario - Proxy checker idea.
 ::     @sintrode - Helped creating the database parsing algorithm.
 ::     @Sintrode - Helped me encoding the CLI.
+::
 ::     A project created in the "server.bat" Discord: https://discord.gg/GSVrHag
 ::------------------------------------------------------------------------------
+@echo off
 cls
 >nul chcp 65001
 setlocal DisableDelayedExpansion
-cd /d "%~dp0"
+pushd "%~dp0"
+for /f "tokens=1,2delims=`" %%A in ('forfiles /m "%~nx0" /c "cmd /c echo(0x1B`0x08"') do (
+    set "\E=%%A"
+    set "\B=%%B"
+)
 set "@LOGGING=(if not exist "Results\" md "Results") & >>Results\!DATETIME!.txt"
 set "@TITLE=title Progress: [!Invite_Percentage!/100%%] - [!Invite_CN!/!Invite_CN_MAX!]  ^|  Result!s_Results!: [!Results_Valid!-!Results_Invalid!]  ^|  Proxy: [!Proxy!] - [!Proxy_CN!/!Proxy_CN_MAX!] - !TITLE!"
 set "@SET_S=if !?! gtr 1 (set s_?=s) else (set s_?=)"
@@ -47,7 +52,7 @@ for /f "tokens=4,5delims=. " %%A in ('ver') do (
     if "%%A.%%B"=="10.0" (
         for %%A in (UNDERLINE`4 UNDERLINEOFF`24 RED`31 GREEN`32 YELLOW`33 CYAN`36 BRIGHTBLACK`90 BRIGHTBLUE`94 BRIGHTMAGENTA`95 BRIGHTWHITE`97) do (
             for /f "tokens=1,2delims=`" %%B in ("%%A") do (
-                set %%B=[%%Cm
+                set "%%B=!\E![%%Cm"
             )
         )
     )
@@ -82,12 +87,12 @@ echo.
 echo.
 echo    !CYAN!Enter your !UNDERLINE!proxy database!UNDERLINEOFF! !CYAN!LINK!CYAN! (or) !CYAN!FILE PATH!CYAN! / Drag and Drop it below...
 set Proxy_DB=
-set /p "Proxy_DB=!CYAN! > !YELLOW!"
+set /p "Proxy_DB=.!\B!!CYAN! > !YELLOW!"
 call :DB_CHECKER Proxy_DB proxy || goto :MAIN
 echo.
 echo    !CYAN!Enter your Discord !UNDERLINE!invite links database!UNDERLINEOFF! !CYAN!LINK!CYAN! (or) !CYAN!FILE PATH!CYAN! / Drag and Drop it below...
 set Invites_DB=
-set /p "Invites_DB=!CYAN! > !YELLOW!"
+set /p "Invites_DB=.!\B!!CYAN! > !YELLOW!"
 call :DB_CHECKER Invites_DB "your Discord invite links" || goto :MAIN
 echo.
 set Proxy=NULL
@@ -119,7 +124,7 @@ for /f "tokens=1-4delims=:.," %%A in ("!time: =0!") do set /a "t1=(((1%%A*60)+1%
             set "Display_Padding=!Display_Padding!                    "
             set "Display_Padding=!Display_Padding:~0,37!"
         )
-        <nul set /p="!BRIGHTBLACK! │ !BRIGHTBLUE!!Display_Padding!!BRIGHTBLACK! <> "
+        <nul set /p=".!\B!!BRIGHTBLACK! │ !BRIGHTBLUE!!Display_Padding!!BRIGHTBLACK! <> "
         call :PROXY
     )
 )
@@ -133,7 +138,7 @@ set /a Percentage=100, Results=Results_Valid+Results_Invalid
 %@SET_S:?=Seconds%
 %@TITLE%
 echo.
-echo !CYAN!Scan completed with !Results_Valid! valid result!s_Results_Valid! and !Results_Invalid! invalid result!s_Results_Invalid! found from !Invite_CN_MAX! indexed link!s_Index! within !Seconds! second!s_Seconds!.
+echo  !CYAN!Scan completed with !Results_Valid! valid result!s_Results_Valid! and !Results_Invalid! invalid result!s_Results_Invalid! found from !Invite_CN_MAX! indexed link!s_Index! within !Seconds! second!s_Seconds!.
 if exist "Results\!DATETIME!.txt" (
     >"!TMPF!\msgbox.vbs" (
         echo Dim Msg,Style,Title,Response
@@ -153,7 +158,7 @@ if exist "Results\!DATETIME!.txt" (
     del /f /q "!TMPF!\msgbox.vbs"
 )
 echo.
-<nul set /p=Press !YELLOW!{ANY KEY}!CYAN! to exit...
+<nul set /p=.!\B! Press !YELLOW!{ANY KEY}!CYAN! to exit...
 >nul pause
 exit
 
